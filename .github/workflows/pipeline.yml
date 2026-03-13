@@ -38,7 +38,7 @@ jobs:
         if: ${{ github.event_name == 'push' && env.SKIP_DEPLOY == 'true' }}
         uses: rjstone/discord-webhook-notify@v2.2.1
         with:
-          webhookUrl: ${{ github.secrets.DISCORD_WEBHOOK }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
           username: Fullstack part 11 Hook
           text: "A new version of Pokedex deployed!"
           severity: info # only to make sure the embed is added
@@ -51,7 +51,7 @@ jobs:
         if: ${{ failure() }}
         uses: rjstone/discord-webhook-notify@v2.2.1
         with:
-          webhookUrl: ${{ github.secrets.DISCORD_WEBHOOK }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
           username: Fullstack part 11 Hook
           text: "Build failed!"
           severity: info # only to make sure the embed is added
