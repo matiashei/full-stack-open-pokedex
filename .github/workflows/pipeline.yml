@@ -34,6 +34,32 @@ jobs:
           service-id: ${{ secrets.MY_RENDER_SERVICE_ID }}
           api-key: ${{ secrets.MY_RENDER_API_KEY }}
           wait-for-success: true
+      - name: Deploy notification
+        if: ${{ github.event_name == 'push' && env.SKIP_DEPLOY == 'true' }}
+        uses: rjstone/discord-webhook-notify@v2.2.1
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          username: Fullstack part 11 Hook
+          text: "A new version of Pokedex deployed!"
+          severity: info # only to make sure the embed is added
+          color: '#00ff00'
+          title: My Fancy Embed Title
+          description: "to [https://full-stack-open-pokedex-dpas.onrender.com/](https://full-stack-open-pokedex-dpas.onrender.com/) by ${{ github.actor }}"
+          # details: not needed because we overrode default description.
+          footer: "Severity: Informational - Today at ${{ github.event.head_commit.timestamp }}"
+      - name: Failed build notification
+        if: ${{ failure() }}
+        uses: rjstone/discord-webhook-notify@v2.2.1
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          username: Fullstack part 11 Hook
+          text: "Build failed!"
+          severity: info # only to make sure the embed is added
+          color: '#ff0000'
+          title: My Fancy Embed Title
+          description: "to [https://full-stack-open-pokedex-dpas.onrender.com/](https://full-stack-open-pokedex-dpas.onrender.com/) by ${{ github.actor }}"
+          # details: not needed because we overrode default description.
+          footer: "Severity: Failure - Today at ${{ github.event.head_commit.timestamp }}"
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
