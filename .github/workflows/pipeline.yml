@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+env:
+  SKIP_DEPLOY: ${{ !contains(join(github.event.commits.*.message, ' '), '#skip') }}
 
 jobs:
   simple_deployment_pipeline:
@@ -15,7 +21,6 @@ jobs:
           node-version: '20'
       - name: Install dependencies
         run: npm install
-
       - name: lint
         run: npm run eslint
       - name: build
@@ -23,13 +28,20 @@ jobs:
       - name: test
         run: npm run test
       - name: Deploy to production
-        if: ${{ github.event_name == 'push' }}
-        uses: johnbeynon/render-deploy-action@v0.0.8
+        if: ${{ github.event_name == 'push' && env.SKIP_DEPLOY == 'true' }}
+        uses: johnbeynon/render-deploy-action@a0588f9aca995a15d69a72cb2bfbf37c12e5b540
         with:
           service-id: ${{ secrets.MY_RENDER_SERVICE_ID }}
           api-key: ${{ secrets.MY_RENDER_API_KEY }}
           wait-for-success: true
+  tag_release:
+    needs: [simple_deployment_pipeline]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Bump version and push tag
-        uses: anothrNick/github-tag-action@1.75.0
+        if: ${{ github.event_name == 'push' && env.SKIP_DEPLOY == 'true' }}
+        uses: anothrNick/github-tag-action@4ed44965e0db8dab2b466a16da04aec3cc312fd8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
