@@ -36,7 +36,7 @@ jobs:
           wait-for-success: true
       - name: Deploy notification
         if: ${{ github.event_name == 'push' && env.SKIP_DEPLOY == 'true' }}
-        uses: rjstone/discord-webhook-notify@v2.2.1
+        uses: rjstone/discord-webhook-notify@v2
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
           username: Fullstack part 11 Hook
@@ -49,7 +49,7 @@ jobs:
           footer: "Severity: Informational - Today at ${{ github.event.head_commit.timestamp }}"
       - name: Failed build notification
         if: ${{ failure() }}
-        uses: rjstone/discord-webhook-notify@v2.2.1
+        uses: rjstone/discord-webhook-notify@v2
         with:
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
           username: Fullstack part 11 Hook
