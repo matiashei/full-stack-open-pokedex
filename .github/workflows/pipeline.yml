@@ -36,18 +36,24 @@ jobs:
           wait-for-success: true
       - name: Deploy notification
         if: ${{ github.event_name == 'push' && env.SKIP_DEPLOY == 'true' }}
-        uses: Ilshidur/action-discord@0.4.0
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: sarisia/actions-status-discord@v1
         with:
-          args: "A new version of Pokedex deployed to [https://full-stack-open-pokedex-dpas.onrender.com/](https://full-stack-open-pokedex-dpas.onrender.com/) by ${{ github.actor }}"
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          title: "Build succeeded!"
+          description: "A new version deployed to [https://full-stack-open-pokedex-dpas.onrender.com/](https://full-stack-open-pokedex-dpas.onrender.com/) by ${{ github.actor }}."
+          color: 0x00ff00
+          username: "Fullstack Part 11 Hook"
       - name: Failed build notification
         if: ${{ failure() }}
-        uses: Ilshidur/action-discord@0.4.0
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: sarisia/actions-status-discord@v1
         with:
-          args: "Build failed! [https://full-stack-open-pokedex-dpas.onrender.com/](https://full-stack-open-pokedex-dpas.onrender.com/) by ${{ github.actor }}."
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          title: "Build failed!"
+          description: "Build or deploy failed: [https://full-stack-open-pokedex-dpas.onrender.com/](https://full-stack-open-pokedex-dpas.onrender.com/) by ${{ github.actor }}."
+          color: 0xff0000
+          username: "Fullstack Part 11 Hook"
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
