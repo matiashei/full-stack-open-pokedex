@@ -22,7 +22,3 @@ jobs:
           retry-all: false # Optional, defaults to "false"
           # String representation of cookie attached to health check request.
           # Format: `Name=Value`
-          cookie: "token=asdf1234" # Optional, default is empty
-          # Basic auth login password pair.
-          # Format: `login:password`
-          basic-auth: "login:password" # Optional, default is empty
